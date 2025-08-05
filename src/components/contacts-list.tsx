@@ -1,7 +1,8 @@
 "use client";
 
-import { useLiveQuery } from "@tanstack/react-db";
+import { useLiveQuery, ilike, or } from "@tanstack/react-db";
 import { contactCollection, type Contact } from "@/collections";
+import { contactsTable } from "@/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +33,7 @@ import {
   Briefcase,
   Plus,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { UpdateContactForm } from "./update-contact-form";
 import { CreateContactForm } from "./create-contact-form";
 import { toast } from "sonner";
@@ -49,31 +50,36 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export function ContactsList() {
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+
   const {
     data: contacts,
     isLoading,
     isError,
     collection,
-  } = useLiveQuery(contactCollection);
-  const [editingContact, setEditingContact] = useState<Contact | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  } = useLiveQuery(
+    (q) => {
+      if (!searchTerm.trim()) {
+        return q.from({ contacts: contactCollection });
+      }
 
-  // Filter contacts based on search term
-  const filteredContacts = useMemo(() => {
-    if (!searchTerm.trim()) return contacts;
-
-    const lowercaseSearch = searchTerm.toLowerCase();
-    return contacts.filter((contact: Contact) => {
-      return (
-        contact.name.toLowerCase().includes(lowercaseSearch) ||
-        contact.email?.toLowerCase().includes(lowercaseSearch) ||
-        contact.tel?.toLowerCase().includes(lowercaseSearch) ||
-        contact.title?.toLowerCase().includes(lowercaseSearch) ||
-        contact.company?.toLowerCase().includes(lowercaseSearch)
-      );
-    });
-  }, [contacts, searchTerm]);
+      const searchPattern = `%${searchTerm}%`;
+      return q
+        .from({ contacts: contactCollection })
+        .where(({ contacts }) =>
+          or(
+            ilike(contacts.name, searchPattern),
+            ilike(contacts.email, searchPattern),
+            ilike(contacts.tel, searchPattern),
+            ilike(contacts.title, searchPattern),
+            ilike(contacts.company, searchPattern),
+          ),
+        );
+    },
+    [searchTerm],
+  );
 
   const handleDeleteContact = async (contactId: string) => {
     try {
@@ -125,7 +131,7 @@ export function ContactsList() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <User className="h-5 w-5" />
-          Your Contacts ({filteredContacts.length})
+          Your Contacts ({contacts.length})
         </CardTitle>
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-sm">
@@ -147,7 +153,7 @@ export function ContactsList() {
         </div>
       </CardHeader>
       <CardContent>
-        {filteredContacts.length === 0 ? (
+        {contacts.length === 0 ? (
           <div className="text-center py-8">
             {searchTerm ? (
               <div>
@@ -182,7 +188,7 @@ export function ContactsList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredContacts.map((contact: Contact) => (
+              {contacts.map((contact: Contact) => (
                 <TableRow key={contact.id} className="hover:bg-gray-50">
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
