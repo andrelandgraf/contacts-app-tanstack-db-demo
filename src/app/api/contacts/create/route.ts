@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check for API secret in headers
     const apiSecret = request.headers.get("x-api-secret");
+    console.log('headers:', request.headers.entries());
 
     if (!apiSecret || apiSecret !== process.env.API_SECRET) {
       return NextResponse.json(
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     const now = new Date();
     const newContact = {
       id: uuidv4(),
-      userId: "api-user", // Use a placeholder for API-created contacts
+      userId: 'e66f0500-b62b-42f2-803b-d3186df73995',
       name,
       email: null,
       tel: null,
