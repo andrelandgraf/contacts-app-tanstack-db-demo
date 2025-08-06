@@ -10,14 +10,14 @@ CREATE TABLE "contacts" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "neon_auth"."users_sync" (
-	"raw_json" jsonb NOT NULL,
-	"id" text PRIMARY KEY NOT NULL,
-	"name" text,
-	"email" text,
-	"created_at" timestamp with time zone,
-	"deleted_at" timestamp with time zone,
-	"updated_at" timestamp with time zone
-);
+-- CREATE TABLE "neon_auth"."users_sync" (
+-- 	"raw_json" jsonb NOT NULL,
+-- 	"id" text PRIMARY KEY NOT NULL,
+-- 	"name" text,
+-- 	"email" text,
+-- 	"created_at" timestamp with time zone,
+-- 	"deleted_at" timestamp with time zone,
+-- 	"updated_at" timestamp with time zone
+-- );
 --> statement-breakpoint
 ALTER TABLE "contacts" ADD CONSTRAINT "contacts_user_id_users_sync_id_fk" FOREIGN KEY ("user_id") REFERENCES "neon_auth"."users_sync"("id") ON DELETE cascade ON UPDATE no action;

@@ -1,33 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TanStack DB w/ Sync - the future of real-time UI
 
-## Getting Started
+This is a simple demo application showcasing TanStack DB with ElectricSQL and a Neon Postgres database for:
 
-First, run the development server:
+- Real-time UI
+- Optimistic updates
+- Sync behind Neon Auth
+- Postgres as the source of truth
+
+This is a [Next.js](https://nextjs.org) project, deployed on Vercel. However, the same sync code would work also with TanStack Start, Remix, and React Router.
+
+## Setup
+
+1. Run `npm i` to install all dependencies.
+
+2. Create a `.env` file and copy the example `.env` content:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .example.env .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Create a new Neon project on [neon.com](https://neon.com).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Enable Neon Auth and copy the Neon Auth credentials into the `.env` file, including the `DATBASE_URL` connection string.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. Run `npm run db:migrate` to populate the database with the Drizzle `/migrations` database schemas.
 
-## Learn More
+6. Back on the Neon console, enable Logical Replication in your Neon project settings (required for Electric SQL).
 
-To learn more about Next.js, take a look at the following resources:
+7. Copy the un-pooled Neon connection string from the Connection dialog.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+8. Create & deploy a new ElectricSQL sync engine via [ElectricSQL Cloud](https://dashboard.electric-sql.cloud/), using the un-pooled Neon connection string.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+9. Add the ElectricSQL sync engine source id and secret to the `.env` file.
+
+10. Run the app locally `npm run dev`
+
+11. Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ## Deploy on Vercel
 
