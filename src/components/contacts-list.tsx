@@ -2,7 +2,6 @@
 
 import { useLiveQuery, ilike, or } from "@tanstack/react-db";
 import { contactCollection, type Contact } from "@/collections";
-import { contactsTable } from "@/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,7 +57,6 @@ export function ContactsList() {
     data: contacts,
     isLoading,
     isError,
-    collection,
   } = useLiveQuery(
     (q) => {
       if (!searchTerm.trim()) {
@@ -85,7 +83,7 @@ export function ContactsList() {
     try {
       // Delete the contact using the collection
       // The collection will call our server action via onDelete
-      await collection.delete(contactId);
+      await contactCollection.delete(contactId);
       toast.success("Contact deleted successfully!");
     } catch (error) {
       console.error("Error deleting contact:", error);

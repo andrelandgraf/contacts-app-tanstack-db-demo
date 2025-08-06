@@ -9,6 +9,7 @@ const createContactSchema = z.object({
   name: z.string().min(1, "Name is required").max(255, "Name is too long"),
 });
 
+// POST /api/contacts/create - Webhook for creating a contact, called by third-party services
 export async function POST(request: NextRequest) {
   try {
     // Check for API secret in headers

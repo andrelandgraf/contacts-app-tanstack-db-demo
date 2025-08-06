@@ -14,7 +14,7 @@ export const contactCollection = createCollection(
     id: "contacts",
     shapeOptions: {
       url: new URL(
-        `/api/shape`,
+        `/api/contacts`,
         typeof window !== `undefined`
           ? window.location.origin
           : `http://localhost:3000`,
